@@ -17,10 +17,7 @@ class TypeDocumentSeeder extends Seeder
     {
         $nombres = [
             'Cedula de Ciudadania',
-            'Tarjeta de Identidad',
-            'Registro Civil',
             'Pasaporte Extranjero',
-            'Nit'
         ];
         foreach ($nombres as $nombre) {
             TypeDocument::create([
