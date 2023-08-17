@@ -16,10 +16,34 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('last_name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
+
+            $table->foreignId('type_document_id')
+            ->constrained('type_documents')
+            ->onUpdate('cascade')
+            ->onDelete('cascade');
+
+            $table->string('document_number');
+
+            $table->foreignId('position_id')
+            ->constrained('positions')
+            ->onUpdate('cascade')
+            ->onDelete('cascade');
+
+            $table->foreignId('area_id')
+            ->constrained('areas')
+            ->onUpdate('cascade')
+            ->onDelete('cascade');
+
+            $table->foreignId('role_id')
+            ->nullable()
+            ->constrained('rols')
+            ->onUpdate('cascade')
+            ->onDelete('cascade');
+
+            $table->softDeletes();
             $table->timestamps();
         });
     }
