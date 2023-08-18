@@ -25,7 +25,7 @@ return new class extends Migration
             ->onUpdate('cascade')
             ->onDelete('cascade');
 
-            $table->string('document_number');
+            $table->string('document_number')->unique();
 
             $table->foreignId('position_id')
             ->constrained('positions')
