@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Administrator\AreaController;
+use App\Http\Controllers\Administrator\PositionController;
+use App\Http\Controllers\Administrator\RolController;
+use App\Http\Controllers\Administrator\TypeDocumentController;
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +22,11 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
+Route::apiResource('/rol', RolController::class);
+Route::apiResource('/area', AreaController::class);
+Route::apiResource('/type-document', TypeDocumentController::class);
+Route::apiResource('/position', PositionController::class);
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
