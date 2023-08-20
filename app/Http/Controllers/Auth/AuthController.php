@@ -17,12 +17,12 @@ class AuthController extends Controller
         $rules = [
             'name' => 'required',
             'last_name' => 'required',
-            'email' => 'required',
+            'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
-            'type_document_id' => 'required',
+            'type_document_id' => 'required|numeric',
             'document_number' => 'required',
-            'position_id' => 'required',
-            'area_id' => 'required',
+            'position_id' => 'required|numeric',
+            'area_id' => 'required|numeric',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -38,7 +38,7 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'type_document_id' => $request->type_document_id,
-                'document_number' => $request->documentNumber,
+                'document_number' => $request->document_number,
                 'position_id' => $request->position_id,
                 'area_id' => $request->area_id,
                 'rol_id' => 3, /* usuario */
@@ -50,11 +50,12 @@ class AuthController extends Controller
             return response()->json([
                 'data' => [
                     'user' => [
+                        'id' => $user->id,
                         'name' => $user->name,
                         'last_name' => $user->last_name,
                         'email' => $user->email,
                         'type_document' => $user->type_document->name,
-                        'document_number' => $user->document_number,
+                        'document_number' => $user->documen_number,
                         'position_id' => $user->position_id,
                         'areaId' => $user->area_id,
                         'rol_id' => $user->rol_id
@@ -63,7 +64,7 @@ class AuthController extends Controller
                 ]
             ]);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Ocurrió un error mientras se registraba el usuario'], 500);
+            return response()->json(['message' => 'Ocurrió un error mientras se registraba el usuario: '.$e->getMessage()], 500);
         }
     }
 
