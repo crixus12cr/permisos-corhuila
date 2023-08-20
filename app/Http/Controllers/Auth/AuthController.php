@@ -16,54 +16,57 @@ class AuthController extends Controller
     {
         $rules = [
             'name' => 'required',
-            'lastName' => 'required',
-            'email' => 'required|email|unique:users',
+            'last_name' => 'required',
+            'email' => 'required',
             'password' => 'required|min:6',
-            'typeDocumentId' => 'required',
-            'documentNumber' => 'required|unique:users',
-            'positionId' => 'required',
-            'areaId' => 'required',
-            'rolId' => 'required',
+            'type_document_id' => 'required',
+            'document_number' => 'required',
+            'position_id' => 'required',
+            'area_id' => 'required',
         ];
 
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
         try {
-            $validator = Validator::make($request->all(), $rules);
-
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
-
             $user = User::create([
                 'name' => $request->name,
-                'last_name' => $request->lastName,
+                'last_name' => $request->last_name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'type_document_id' => $request->typeDocumentId,
+                'type_document_id' => $request->type_document_id,
                 'document_number' => $request->documentNumber,
-                'position_id' => $request->positionId,
-                'area_id' => $request->areaId,
+                'position_id' => $request->position_id,
+                'area_id' => $request->area_id,
                 'rol_id' => 3, /* usuario */
             ]);
+            $user->load('type_document');
 
             $token = JWTAuth::fromUser($user);
 
             return response()->json([
-                'user' => [
-                    'name' => $user->name,
-                    'lastName' => $user->last_name,
-                    'email' => $user->email,
-                    'typeDocument' => $user->type_document->name,
-                    'documentNumber' => $user->document_number,
-                    'positionId' => $user->position_id,
-                    'areaId' => $user->area_id,
-                    'rolId' => $user->rol_id
-                ],
-                'token' => $token
+                'data' => [
+                    'user' => [
+                        'name' => $user->name,
+                        'last_name' => $user->last_name,
+                        'email' => $user->email,
+                        'type_document' => $user->type_document->name,
+                        'document_number' => $user->document_number,
+                        'position_id' => $user->position_id,
+                        'areaId' => $user->area_id,
+                        'rol_id' => $user->rol_id
+                    ],
+                    'token' => $token
+                ]
             ]);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Ocurrio un error mientras se registraba el usuario'], 500);
+            return response()->json(['message' => 'Ocurrió un error mientras se registraba el usuario'], 500);
         }
     }
+
 
 
     public function login(Request $request)
@@ -85,13 +88,13 @@ class AuthController extends Controller
                 'user' => [
                     'id' => $user->id,
                     'name' => $user->name,
-                    'lastName' => $user->last_name,
+                    'last_name' => $user->last_name,
                     'email' => $user->email,
-                    'typeDocument' => $user->type_document->name,
-                    'documentNumber' => $user->document_number,
-                    'positionId' => $user->position_id,
-                    'areaId' => $user->area_id,
-                    'rolId' => $user->rol_id
+                    'type_document' => $user->type_document->name,
+                    'document_number' => $user->document_number,
+                    'position_id' => $user->position_id,
+                    'area_id' => $user->area_id,
+                    'rol_id' => $user->rol_id
                 ],
                 'token' => $token
             ]);
