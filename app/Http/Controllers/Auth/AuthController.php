@@ -19,10 +19,10 @@ class AuthController extends Controller
             'last_name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
-            'type_document_id' => 'required|numeric',
+            'type_document_id' => 'required|numeric|exists:type_documents,id',
             'document_number' => 'required',
-            'position_id' => 'required|numeric',
-            'area_id' => 'required|numeric',
+            'position_id' => 'required|numeric|exists:positions,id',
+            'area_id' => 'required|numeric|exists:areas,id',
         ];
 
         $validator = Validator::make($request->all(), $rules);
