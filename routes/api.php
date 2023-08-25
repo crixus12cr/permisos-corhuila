@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Administrator\AreaController;
+use App\Http\Controllers\Administrator\PermissionController;
 use App\Http\Controllers\Administrator\PositionController;
 use App\Http\Controllers\Administrator\RolController;
 use App\Http\Controllers\Administrator\TypeDocumentController;
@@ -33,4 +34,5 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
 /* rutas */
+Route::apiResource('/permission', PermissionController::class);
 Route::apiResource('/users', UserController::class);

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
 
             $table->date('request_date');
-            $table->int('day');
+            $table->integer('day');
             $table->string('start_hour');
             $table->string('end_hour');
             $table->string('commitment');
