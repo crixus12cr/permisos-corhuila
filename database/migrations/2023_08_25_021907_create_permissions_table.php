@@ -17,13 +17,12 @@ return new class extends Migration
             $table->id();
 
             $table->date('request_date');
-            $table->integer('day');
-            $table->string('start_hour');
-            $table->string('end_hour');
+            $table->date('date_permission');
+            $table->time('time_start');
+            $table->time('time_end');
             $table->string('commitment');
             $table->text('observations')->nullable();
 
-            $table->boolean('autorization_user')->nullable();
             $table->boolean('autorization_boss')->nullable();
             $table->boolean('autorization_hr')->nullable();
 

@@ -12,12 +12,11 @@ class Permission extends Model
 
     protected $fillable = [
         'request_date',
-        'day',
-        'start_hour',
-        'end_hour',
+        'date_permission',
+        'time_start',
+        'time_end',
         'commitment',
         'observations',
-        'autorization_user',
         'autorization_boss',
         'autorization_hr',
         'user_id'
