@@ -4,6 +4,7 @@ use App\Http\Controllers\Administrator\AreaController;
 use App\Http\Controllers\Administrator\PositionController;
 use App\Http\Controllers\Administrator\RolController;
 use App\Http\Controllers\Administrator\TypeDocumentController;
+use App\Http\Controllers\Administrator\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,3 +31,6 @@ Route::apiResource('/position', PositionController::class);
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+
+/* rutas */
+Route::apiResource('/users', UserController::class);

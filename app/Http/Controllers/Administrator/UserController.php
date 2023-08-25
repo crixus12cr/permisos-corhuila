@@ -29,6 +29,16 @@ class UserController extends Controller
                 ->when($request->area_id, function ($query) use ($request) {
                     $query->where('area_id', $request->area_id);
                 })
+                ->select(
+                    'id',
+                    'name',
+                    'last_name',
+                    'email',
+                    'type_document_id',
+                    'document_number',
+                    'position_id',
+                    'area_id',
+                )
                 ->get();
 
             if ($users->isEmpty()) {
