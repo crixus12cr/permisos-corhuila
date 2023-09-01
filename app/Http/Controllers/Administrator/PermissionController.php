@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Administrator;
 
 use App\Http\Controllers\Controller;
 use App\Models\Permission;
+use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PermissionController extends Controller
 {
@@ -16,7 +19,36 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        return response()->json(Permission::get());
+        $payload = JWTAuth::parseToken()->getPayload();
+
+        $userId = $payload->get('sub');
+
+        $userAccess = User::where('id', $userId)->with('rol')->first();
+
+        $rol = $userAccess->rol->id;
+
+        switch ($rol) {
+            case 1:
+
+                break;
+            case 2:
+                # code...
+                break;
+            case 3:
+                $permiso = Permission::where('user_id', $userId)->paginate(10);
+
+                $permisos = [
+
+                ];
+                return response()->json($permiso);
+                break;
+
+            default:
+                # code...
+                break;
+        }
+
+        // return response()->json(Permission::get());
     }
 
     /**
@@ -46,12 +78,11 @@ class PermissionController extends Controller
                 'message' => 'Permiso creado exitosamente',
                 'data' => $permiso
             ], 201);
-
         } catch (QueryException $e) {
             return response()->json([
                 'status' => 'ERROR',
                 'message' => $e->getMessage()
-              ], 500);
+            ], 500);
         }
     }
 

@@ -30,9 +30,17 @@ Route::apiResource('/area', AreaController::class);
 Route::apiResource('/type-document', TypeDocumentController::class);
 Route::apiResource('/position', PositionController::class);
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register']);
 
 /* rutas */
-Route::apiResource('/permission', PermissionController::class);
-Route::apiResource('/users', UserController::class);
+
+Route::group(['middleware' => ['jwt.token']], function () {
+
+    Route::apiResource('/permission', PermissionController::class);
+    Route::apiResource('/users', UserController::class);
+
+});
+
+
+
