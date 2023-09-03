@@ -55,7 +55,7 @@ class AuthController extends Controller
                         'last_name' => $user->last_name,
                         'email' => $user->email,
                         'type_document' => $user->type_document->name,
-                        'document_number' => $user->documen_number,
+                        'document_number' => $user->document_number,
                         'position' => [
                             'position_id' => $user->position_id,
                             'name' => $user->position->name
@@ -101,7 +101,7 @@ class AuthController extends Controller
                         'last_name' => $user->last_name,
                         'email' => $user->email,
                         'type_document' => $user->type_document->name,
-                        'document_number' => $user->documen_number,
+                        'document_number' => $user->document_number,
                         'position' => [
                             'id' => $user->position_id,
                             'name' => $user->position->name
