@@ -17,7 +17,7 @@ class PermissionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $payload = JWTAuth::parseToken()->getPayload();
 
@@ -28,18 +28,62 @@ class PermissionController extends Controller
         $rol = $userAccess->rol->id;
 
         switch ($rol) {
-            case 1:
+            case 1: //super usuario
+                $permiso = Permission::when($request->created_at, function ($query) use($request){
+                    $query->where('created_at', $request->created_at);
+                })
+                ->when($request->document_number, function ($query) use($request){
+                    $query->whereHas('user', function ($_query) use($request) {
+                        $_query->where('document_number', $request->document_number);
+                    });
+                })
+                ->when($request->area, function ($query) use($request) {
+                    $query->whereHas('user.area', function ($_query) use($request) {
+                        $_query->where('name', 'ilike', '%' . $request->area . '%');
+                    });
+                })
+                ->when($request->area, function ($query) use($request) {
+                    $query->whereHas('user.position', function ($_query) use($request) {
+                        $_query->where('name', 'ilike', '%' . $request->area . '%');
+                    });
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
 
+                return response()->json($permiso);
                 break;
-            case 2:
-                # code...
+            case 2://administrador
+                $permiso = Permission::when($request->created_at, function ($query) use($request){
+                    $query->where('created_at', $request->created_at);
+                })
+                ->when($request->document_number, function ($query) use($request){
+                    $query->whereHas('user', function ($_query) use($request) {
+                        $_query->where('document_number', $request->document_number);
+                    });
+                })
+                ->when($request->area, function ($query) use($request) {
+                    $query->whereHas('user.area', function ($_query) use($request) {
+                        $_query->where('name', 'ilike', '%' . $request->area . '%');
+                    });
+                })
+                ->when($request->area, function ($query) use($request) {
+                    $query->whereHas('user.position', function ($_query) use($request) {
+                        $_query->where('name', 'ilike', '%' . $request->area . '%');
+                    });
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
+
+                return response()->json($permiso);
                 break;
-            case 3:
-                $permiso = Permission::where('user_id', $userId)->paginate(10);
+            case 3: //usuario
+                $permiso =  Permission::where('user_id', $userId)
+                ->when($request->created_at, function ($query) use($request){
+                    $query->where('created_at', $request->created_at);
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
 
-                $permisos = [
-
-                ];
                 return response()->json($permiso);
                 break;
 
