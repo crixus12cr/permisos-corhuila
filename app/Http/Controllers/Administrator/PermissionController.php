@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Administrator;
 
+use App\Exports\PermisosExport;
 use App\Http\Controllers\Controller;
 use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PermissionController extends Controller
@@ -17,7 +19,7 @@ class PermissionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $data = false)
     {
         $payload = JWTAuth::parseToken()->getPayload();
 
@@ -47,10 +49,9 @@ class PermissionController extends Controller
                         $_query->where('name', 'ilike', '%' . $request->position . '%');
                     });
                 })
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
+                ->with('user')
+                ->orderBy('created_at', 'desc');
 
-                return response()->json($permiso);
                 break;
             case 2://administrador
                 $permiso = Permission::when($request->created_at, function ($query) use($request){
@@ -71,20 +72,16 @@ class PermissionController extends Controller
                         $_query->where('name', 'ilike', '%' . $request->area . '%');
                     });
                 })
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
+                ->orderBy('created_at', 'desc');
 
-                return response()->json($permiso);
                 break;
             case 3: //usuario
                 $permiso =  Permission::where('user_id', $userId)
                 ->when($request->created_at, function ($query) use($request){
                     $query->where('created_at', $request->created_at);
                 })
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
+                ->orderBy('created_at', 'desc');
 
-                return response()->json($permiso);
                 break;
 
             default:
@@ -92,7 +89,19 @@ class PermissionController extends Controller
                 break;
         }
 
-        // return response()->json(Permission::get());
+        if ($data) {
+            return $permissions = $permiso->get();
+
+        } else {
+            $permissions = $permiso->paginate(10);
+            return response()->json($permissions);
+        }
+    }
+
+    public function downloadExcel(Request $request){
+        $datos = $this->index($request, $data = true);
+
+        return Excel::download(new PermisosExport($datos), 'permissions.xlsx');
     }
 
     /**
