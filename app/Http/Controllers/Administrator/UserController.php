@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Administrator;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
@@ -59,10 +60,40 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
     public function store(Request $request)
     {
-        //
+        try {
+            $request->validate([
+                'name' => 'required|string',
+                'last_name' => 'required|string',
+                'email' => 'required|email|unique:users',
+                'password' => 'required|min:8',
+                'type_document_id' => 'required|numeric',
+                'document_number' => 'required|string|unique:users',
+                'position_id' => 'required|numeric',
+                'area_id' => 'required|numeric',
+                'rol_id' => 'required|numeric',
+            ]);
+
+            $user = User::create([
+                'name' => $request->input('name'),
+                'last_name' => $request->input('last_name'),
+                'email' => $request->input('email'),
+                'password' => Hash::make($request->input('password')),
+                'type_document_id' => $request->input('type_document_id'),
+                'document_number' => $request->input('document_number'),
+                'position_id' => $request->input('position_id'),
+                'area_id' => $request->input('area_id'),
+                'rol_id' => $request->input('rol_id'),
+            ]);
+
+            return response()->json(['message' => 'Usuario creado con éxito', 'user' => $user], 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al crear el usuario: ' . $e->getMessage()], 500);
+        }
     }
+
 
     /**
      * Display the specified resource.
@@ -72,8 +103,15 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $user = User::findOrFail($id);
+
+            return response()->json(['user' => $user]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Usuario no encontrado: ' . $e->getMessage()], 404);
+        }
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -82,10 +120,46 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $user = User::findOrFail($id);
+
+            $request->validate([
+                'name' => 'required|string',
+                'last_name' => 'required|string',
+                'email' => 'required|email|unique:users,email,' . $user->id,
+                'password' => 'nullable|min:8',
+                'type_document_id' => 'required|numeric',
+                'document_number' => 'required|string|unique:users,document_number,' . $user->id,
+                'position_id' => 'required|numeric',
+                'area_id' => 'required|numeric',
+                'rol_id' => 'required|numeric',
+            ]);
+
+            $user->update([
+                'name' => $request->input('name'),
+                'last_name' => $request->input('last_name'),
+                'email' => $request->input('email'),
+                'type_document_id' => $request->input('type_document_id'),
+                'document_number' => $request->input('document_number'),
+                'position_id' => $request->input('position_id'),
+                'area_id' => $request->input('area_id'),
+                'rol_id' => $request->input('rol_id'),
+            ]);
+
+            if ($request->has('password')) {
+                $user->password = Hash::make($request->input('password'));
+                $user->save();
+            }
+
+            return response()->json(['message' => 'Usuario actualizado con éxito', 'user' => $user]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al actualizar el usuario: ' . $e->getMessage()], 500);
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -95,6 +169,14 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $user = User::findOrFail($id);
+
+            $user->delete();
+
+            return response()->json(['message' => 'Usuario eliminado con éxito']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al eliminar el usuario: ' . $e->getMessage()], 500);
+        }
     }
 }
