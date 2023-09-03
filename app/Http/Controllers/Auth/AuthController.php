@@ -56,10 +56,18 @@ class AuthController extends Controller
                         'email' => $user->email,
                         'type_document' => $user->type_document->name,
                         'document_number' => $user->documen_number,
-                        'position_id' => $user->position_id,
-                        'areaId' => $user->area_id,
-                        'rol_id' => $user->rol_id,
-                        'rol_name' => $user->rol->name
+                        'position' => [
+                            'position_id' => $user->position_id,
+                            'name' => $user->position->name
+                        ],
+                        'area' => [
+                            'position_id' => $user->area_id,
+                            'name' => $user->area->name
+                        ],
+                        'rol' => [
+                            'rol_id' => $user->rol_id,
+                            'name' => $user->rol->name
+                            ]
                     ],
                     'token' => $token
                 ]
@@ -89,14 +97,23 @@ class AuthController extends Controller
             return response()->json([
                 'user' => [
                     'id' => $user->id,
-                    'name' => $user->name,
-                    'last_name' => $user->last_name,
-                    'email' => $user->email,
-                    'type_document' => $user->type_document->name,
-                    'document_number' => $user->document_number,
-                    'position_id' => $user->position_id,
-                    'area_id' => $user->area_id,
-                    'rol_id' => $user->rol_id
+                        'name' => $user->name,
+                        'last_name' => $user->last_name,
+                        'email' => $user->email,
+                        'type_document' => $user->type_document->name,
+                        'document_number' => $user->documen_number,
+                        'position' => [
+                            'id' => $user->position_id,
+                            'name' => $user->position->name
+                        ],
+                        'area' => [
+                            'id' => $user->area_id,
+                            'name' => $user->area->name
+                        ],
+                        'rol' => [
+                            'id' => $user->rol_id,
+                            'name' => $user->rol->name
+                            ]
                 ],
                 'token' => $token
             ]);
