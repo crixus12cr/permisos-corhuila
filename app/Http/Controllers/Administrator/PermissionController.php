@@ -42,9 +42,9 @@ class PermissionController extends Controller
                         $_query->where('name', 'ilike', '%' . $request->area . '%');
                     });
                 })
-                ->when($request->area, function ($query) use($request) {
+                ->when($request->position, function ($query) use($request) {
                     $query->whereHas('user.position', function ($_query) use($request) {
-                        $_query->where('name', 'ilike', '%' . $request->area . '%');
+                        $_query->where('name', 'ilike', '%' . $request->position . '%');
                     });
                 })
                 ->orderBy('created_at', 'desc')
@@ -150,7 +150,17 @@ class PermissionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
+        $permission = Permission::find($id);
+
+        if ($permission) {
+            $permission->update([
+                'autorization_boss' => $request->boss,
+                'autorization_hr' => $request->hr,
+            ]);
+
+            $permission->save();
+        }
     }
 
     /**
