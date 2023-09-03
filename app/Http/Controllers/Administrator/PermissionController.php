@@ -6,6 +6,7 @@ use App\Exports\PermisosExport;
 use App\Http\Controllers\Controller;
 use App\Models\Permission;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,8 +32,23 @@ class PermissionController extends Controller
 
         switch ($rol) {
             case 1: //super usuario
-                $permiso = Permission::when($request->created_at, function ($query) use($request){
-                    $query->where('created_at', $request->created_at);
+                $permiso = Permission::when($request->created_at, function ($query) use ($request) {
+                    if ($request->created_at === 'last_day') {
+                        $query->whereDate('created_at', Carbon::yesterday());
+                    }
+                    elseif ($request->created_at === 'last_week') {
+                        $query->whereDate('created_at', '>', Carbon::now()->subWeek());
+                    }
+                    elseif ($request->created_at === 'last_month') {
+                        $query->whereMonth('created_at', Carbon::now()->subMonth()->month);
+                        $query->whereYear('created_at', Carbon::now()->subMonth()->year);
+                    }
+                    elseif ($request->created_at === 'last_year') {
+                        $query->whereYear('created_at', Carbon::now()->subYear()->year);
+                    }
+                    else {
+                        $query->whereDate('created_at', $request->created_at);
+                    }
                 })
                 ->when($request->document_number, function ($query) use($request){
                     $query->whereHas('user', function ($_query) use($request) {
@@ -54,8 +70,23 @@ class PermissionController extends Controller
 
                 break;
             case 2://administrador
-                $permiso = Permission::when($request->created_at, function ($query) use($request){
-                    $query->where('created_at', $request->created_at);
+                $permiso = Permission::when($request->created_at, function ($query) use ($request) {
+                    if ($request->created_at === 'last_day') {
+                        $query->whereDate('created_at', Carbon::yesterday());
+                    }
+                    elseif ($request->created_at === 'last_week') {
+                        $query->whereDate('created_at', '>', Carbon::now()->subWeek());
+                    }
+                    elseif ($request->created_at === 'last_month') {
+                        $query->whereMonth('created_at', Carbon::now()->subMonth()->month);
+                        $query->whereYear('created_at', Carbon::now()->subMonth()->year);
+                    }
+                    elseif ($request->created_at === 'last_year') {
+                        $query->whereYear('created_at', Carbon::now()->subYear()->year);
+                    }
+                    else {
+                        $query->whereDate('created_at', $request->created_at);
+                    }
                 })
                 ->when($request->document_number, function ($query) use($request){
                     $query->whereHas('user', function ($_query) use($request) {
@@ -77,8 +108,23 @@ class PermissionController extends Controller
                 break;
             case 3: //usuario
                 $permiso =  Permission::where('user_id', $userId)
-                ->when($request->created_at, function ($query) use($request){
-                    $query->where('created_at', $request->created_at);
+                ->when($request->created_at, function ($query) use ($request) {
+                    if ($request->created_at === 'last_day') {
+                        $query->whereDate('created_at', Carbon::yesterday());
+                    }
+                    elseif ($request->created_at === 'last_week') {
+                        $query->whereDate('created_at', '>', Carbon::now()->subWeek());
+                    }
+                    elseif ($request->created_at === 'last_month') {
+                        $query->whereMonth('created_at', Carbon::now()->subMonth()->month);
+                        $query->whereYear('created_at', Carbon::now()->subMonth()->year);
+                    }
+                    elseif ($request->created_at === 'last_year') {
+                        $query->whereYear('created_at', Carbon::now()->subYear()->year);
+                    }
+                    else {
+                        $query->whereDate('created_at', $request->created_at);
+                    }
                 })
                 ->orderBy('created_at', 'desc');
 
