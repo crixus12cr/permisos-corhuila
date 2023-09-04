@@ -142,22 +142,16 @@ class PermissionController extends Controller
     // }
 
     public function downloadExcel(Request $request)
-{
-    $datos = $this->index($request, $data = true);
-    $now = Carbon::now();
-    $fileName = 'permissions' . $now . '.xlsx';
+    {
+        $datos = $this->index($request, $data = true);
+        $now = Carbon::now();
 
-    // Genera el archivo Excel y guárdalo en el almacenamiento
-    $filePath = storage_path('app/temp/' . $fileName); // Ubicación temporal
-    Excel::store(new PermisosExport($datos), 'temp/' . $fileName, 'local');
+        $fileName = 'permissions'.$now.'.xlsx';
 
-    // Obtiene la ruta relativa del archivo en el almacenamiento local
-    $relativePath = 'temp/' . $fileName;
+        $path = Excel::store(new PermisosExport($datos), $fileName);
 
-    // Devuelve la ruta relativa del archivo en la respuesta
-    return response()->json(['file_path' => $relativePath]);
-}
-
+        return response()->download(storage_path('app/'.$path));
+    }
 
     /**
      * Store a newly created resource in storage.

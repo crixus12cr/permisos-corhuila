@@ -123,6 +123,17 @@ class UserController extends Controller
                  ]);
              }
 
+             return response()->json(['message' => 'Usuario actualizado con éxito', 'user' => $user]);
+         } catch (\Exception $e) {
+             return response()->json(['error' => 'Error al actualizar el usuario: ' . $e->getMessage()], 500);
+         }
+     }
+
+     public function contra(Request $request, $id)
+     {
+         try {
+             $user = User::findOrFail($id);
+
              if ($request->has('password')) {
                  $contrasena = Hash::make($request->password);
                  $user->update([
