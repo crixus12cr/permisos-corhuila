@@ -277,7 +277,7 @@ class PermissionController extends Controller
 
         if ($permission) {
             $permission->update([
-                'autorization_boss' => $request->boss,
+                // 'autorization_boss' => $request->boss,
                 'autorization_hr' => $request->hr,
             ]);
 
