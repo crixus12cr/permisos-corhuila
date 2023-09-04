@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -134,11 +135,32 @@ class PermissionController extends Controller
         }
     }
 
+    // public function downloadExcel(Request $request)
+    // {
+    //     $datos = $this->index($request, $data = true);
+    //     $now = Carbon::now();
+    //     return Excel::download(new PermisosExport($datos), 'permissions'.$now.'.xlsx');
+    // }
+
     public function downloadExcel(Request $request)
     {
         $datos = $this->index($request, $data = true);
         $now = Carbon::now();
-        return Excel::download(new PermisosExport($datos), 'permissions'.$now.'.xlsx');
+        $fileName = 'permissions' . $now . '.xlsx';
+
+        $excelFile = Excel::download(new PermisosExport($datos), $fileName);
+
+        return Response::stream(
+            function () use ($excelFile) {
+                $excelFile->send('permissions.xlsx');
+            },
+            200,
+            [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Disposition' => 'attachment; filename="permissions.xlsx"',
+                'Cache-Control' => 'max-age=0',
+            ]
+        );
     }
 
 
