@@ -118,8 +118,8 @@ class UserController extends Controller
             $user = User::findOrFail($id);
 
             $user->update([
-                'rol_id' => $request->rol_id,
-                'password' => Hash::make($request->password)
+                'rol_id' => $request->rol_id??null,
+                'password' => Hash::make($request->password)??null
             ]);
 
             return response()->json(['message' => 'Usuario actualizado con éxito', 'user' => $user]);
