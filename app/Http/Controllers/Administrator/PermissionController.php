@@ -141,6 +141,7 @@ class PermissionController extends Controller
         return Excel::download(new PermisosExport($datos), 'permissions'.$now.'.xlsx');
     }
 
+
     /**
      * Store a newly created resource in storage.
      *

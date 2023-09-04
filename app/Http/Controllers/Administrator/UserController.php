@@ -126,18 +126,6 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($id);
 
-            $request->validate([
-                'name' => 'required|string',
-                'last_name' => 'required|string',
-                'email' => 'required|email|unique:users,email,' . $user->id,
-                'password' => 'nullable|min:8',
-                'type_document_id' => 'required|numeric',
-                'document_number' => 'required|string|unique:users,document_number,' . $user->id,
-                'position_id' => 'required|numeric',
-                'area_id' => 'required|numeric',
-                'rol_id' => 'required|numeric',
-            ]);
-
             $user->update([
                 'name' => $request->input('name'),
                 'last_name' => $request->input('last_name'),
