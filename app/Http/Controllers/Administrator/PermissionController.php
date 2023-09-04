@@ -130,7 +130,7 @@ class PermissionController extends Controller
         if ($data) {
             return $permissions = $permiso->get();
         } else {
-            $permissions = $permiso->paginate(10);
+            $permissions = $permiso->get();
             return response()->json($permissions);
         }
     }
