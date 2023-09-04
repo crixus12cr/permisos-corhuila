@@ -117,16 +117,16 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($id);
 
-            $rol = $request->rol_id;
+            $rol = $request->rol_id??null;
             $contrasena = Hash::make($request->password)??null;
 
-            if ($rol) {
+            if ($rol !== null) {
                 $user->update([
                     'rol_id' => $rol,
                 ]);
             }
 
-            if ($contrasena) {
+            if ($contrasena !== null) {
                 $user->update([
                     'password' => $contrasena
                 ]);
