@@ -270,6 +270,21 @@ class PermissionController extends Controller
         }
     }
 
+    public function autorization(Request $request, $id)
+    {
+
+        $permission = Permission::find($request->id);
+
+        if ($permission) {
+            $permission->update([
+                'autorization_boss' => $request->boss,
+                'autorization_hr' => $request->hr,
+            ]);
+
+            $permission->save();
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      *
