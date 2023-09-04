@@ -40,9 +40,8 @@ Route::group(['middleware' => ['jwt.token']], function () {
     Route::apiResource('/permission', PermissionController::class);
     Route::apiResource('/users', UserController::class);
     Route::post('/descargar/excel', [PermissionController::class, 'downloadExcel']);
+    Route::get('/descargar/archivo/{id}', [PermissionController::class, 'downloadFile']);
 });
-
-Route::get('/descargar/archivo/{id}', [PermissionController::class, 'downloadFile']);
 
 
 
