@@ -38,7 +38,6 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::group(['middleware' => ['jwt.token']], function () {
 
     Route::apiResource('/permission', PermissionController::class);
-    Route::post('/autorization', [PermissionController::class, 'autorization']);
     Route::apiResource('/users', UserController::class);
     Route::post('/user/password', [UserController::class, 'contra']);
     Route::post('/descargar/excel', [PermissionController::class, 'downloadExcel']);
