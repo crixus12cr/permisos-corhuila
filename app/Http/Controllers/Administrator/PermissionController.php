@@ -181,6 +181,36 @@ class PermissionController extends Controller
         }
     }
 
+    public function downloadFile($id)
+    {
+        try {
+            $permission = Permission::find($id);
+
+            if (!$permission) {
+                return response()->json([
+                    'status' => 'ERROR',
+                    'message' => 'Permiso no encontrado',
+                ], 404);
+            }
+
+            $filePath = $permission->file;
+
+            if (!Storage::exists($filePath)) {
+                return response()->json([
+                    'status' => 'ERROR',
+                    'message' => 'El archivo no existe',
+                ], 404);
+            }
+
+            return Storage::download($filePath);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'ERROR',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 
     /**
      * Display the specified resource.
