@@ -22,7 +22,7 @@ return new class extends Migration
             $table->time('time_end');
             $table->string('commitment');
             $table->text('observations')->nullable();
-
+            $table->string('file')->nullable();
             $table->boolean('autorization_boss')->nullable();
             $table->boolean('autorization_hr')->nullable();
 

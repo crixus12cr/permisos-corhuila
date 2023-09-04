@@ -17,6 +17,7 @@ class Permission extends Model
         'time_end',
         'commitment',
         'observations',
+        'file',
         'autorization_boss',
         'autorization_hr',
         'user_id'
