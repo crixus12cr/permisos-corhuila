@@ -256,8 +256,8 @@ class PermissionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-
+{
+    try {
         $permission = Permission::find($id);
 
         if ($permission) {
@@ -265,25 +265,17 @@ class PermissionController extends Controller
                 'autorization_boss' => $request->boss,
                 'autorization_hr' => $request->hr,
             ]);
-
             $permission->save();
+
+            return response()->json(['message' => 'Permiso actualizado con éxito', 'permission' => $permission]);
+        } else {
+            return response()->json(['error' => 'Permiso no encontrado'], 404);
         }
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error al actualizar el permiso: ' . $e->getMessage()], 500);
     }
+}
 
-    public function autorization(Request $request, $id)
-    {
-
-        $permission = Permission::find($request->id);
-
-        if ($permission) {
-            $permission->update([
-                // 'autorization_boss' => $request->boss,
-                'autorization_hr' => $request->hr,
-            ]);
-
-            $permission->save();
-        }
-    }
 
     /**
      * Remove the specified resource from storage.
