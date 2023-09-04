@@ -129,10 +129,10 @@ class UserController extends Controller
          }
      }
 
-     public function contra(Request $request, $id)
+     public function contra(Request $request)
      {
          try {
-             $user = User::findOrFail($id);
+             $user = User::findOrFail($request->id);
 
              if ($request->has('password')) {
                  $contrasena = Hash::make($request->password);

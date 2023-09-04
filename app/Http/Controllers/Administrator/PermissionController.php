@@ -134,24 +134,13 @@ class PermissionController extends Controller
         }
     }
 
-    // public function downloadExcel(Request $request)
-    // {
-    //     $datos = $this->index($request, $data = true);
-    //     $now = Carbon::now();
-    //     return Excel::download(new PermisosExport($datos), 'permissions'.$now.'.xlsx');
-    // }
-
     public function downloadExcel(Request $request)
     {
         $datos = $this->index($request, $data = true);
         $now = Carbon::now();
-
-        $fileName = 'permissions'.$now.'.xlsx';
-
-        $path = Excel::store(new PermisosExport($datos), $fileName);
-
-        return response()->download(storage_path('app/'.$path));
+        return Excel::download(new PermisosExport($datos), 'permissions'.$now.'.xlsx');
     }
+
 
     /**
      * Store a newly created resource in storage.
