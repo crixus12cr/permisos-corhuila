@@ -117,9 +117,11 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($id);
 
+            $rol = $request->rol_id??null;
+            $contrasena = Hash::make($request->password)??null;
             $user->update([
-                'rol_id' => $request->rol_id??null,
-                'password' => Hash::make($request->password)??null
+                'rol_id' => $rol,
+                'password' => $contrasena
             ]);
 
             return response()->json(['message' => 'Usuario actualizado con éxito', 'user' => $user]);
