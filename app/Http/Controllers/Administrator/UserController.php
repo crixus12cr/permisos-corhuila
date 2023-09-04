@@ -18,7 +18,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         try {
-            $users = User::when($request->name, function ($query) use ($request) {
+            $user = User::when($request->name, function ($query) use ($request) {
                 $query->where('name', 'ilike', '%' . $request->name . '%')
                     ->orWhere('last_name', 'ilike', '%' . $request->name . '%');
             })
@@ -31,23 +31,14 @@ class UserController extends Controller
                 ->when($request->area_id, function ($query) use ($request) {
                     $query->where('area_id', $request->area_id);
                 })
-                ->select(
-                    'id',
-                    'name',
-                    'last_name',
-                    'email',
-                    'type_document_id',
-                    'document_number',
-                    'position_id',
-                    'area_id',
-                )
+                ->with('type_document','position','area','rol')
                 ->get();
 
-            if ($users->isEmpty()) {
+            if ($user->isEmpty()) {
                 return response()->json(['message' => 'No hay usuarios'], 404);
             }
 
-            return response()->json($users);
+            return response()->json($user);
         } catch (\Exception $e) {
             return response()->json(['message' => 'An error occurred', 'error' => $e->getMessage()], 500);
         }
