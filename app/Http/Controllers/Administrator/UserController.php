@@ -112,32 +112,30 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function update(Request $request, $id)
-    {
-        try {
-            $user = User::findOrFail($id);
+     public function update(Request $request, $id)
+     {
+         try {
+             $user = User::findOrFail($id);
 
-            $rol = $request->rol_id??null;
-            $contrasena = Hash::make($request->password)??null;
+             if ($request->has('rol_id')) {
+                 $user->update([
+                     'rol_id' => $request->rol_id,
+                 ]);
+             }
 
-            if ($rol !== null) {
-                $user->update([
-                    'rol_id' => $rol,
-                ]);
-            }
+             if ($request->has('password')) {
+                 $contrasena = Hash::make($request->password);
+                 $user->update([
+                     'password' => $contrasena
+                 ]);
+             }
 
-            if ($contrasena !== null) {
-                $user->update([
-                    'password' => $contrasena
-                ]);
-            }
+             return response()->json(['message' => 'Usuario actualizado con éxito', 'user' => $user]);
+         } catch (\Exception $e) {
+             return response()->json(['error' => 'Error al actualizar el usuario: ' . $e->getMessage()], 500);
+         }
+     }
 
-
-            return response()->json(['message' => 'Usuario actualizado con éxito', 'user' => $user]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Error al actualizar el usuario: ' . $e->getMessage()], 500);
-        }
-    }
 
 
     /**
