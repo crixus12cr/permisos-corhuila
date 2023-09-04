@@ -4,10 +4,13 @@ namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class PermisosExport implements FromCollection,WithHeadings, WithMapping
+class PermisosExport implements FromCollection,WithHeadings, WithMapping, ShouldAutoSize, WithStyles
 {
     use Exportable;
 
@@ -25,19 +28,54 @@ class PermisosExport implements FromCollection,WithHeadings, WithMapping
 
     public function headings(): array
     {
-        return ['Nombres', 'Apellidos', 'Telefono', 'Usuario', 'Email', 'Tipo de Identificacion', 'Numero de Identificacion'];
+        return ['Fecha solicitud', 'Fecha permiso', 'Hora inicio', 'Hora fin', 'Tipo compromiso', 'Observacion', 'Autorizacion jefe', 'Autorizacion Recursos Humanos', 'Usuario', 'N° documento', 'Cargo', 'Area', 'Rol'];
     }
 
-    public function map($customers): array
+    public function map($permisos): array
     {
+        $autorizacion_boss = $permisos->autorization_boss ? 'Autorizado' : 'No Autorizado';
+        $autorization_hr = $permisos->autorization_hr ? 'Autorizado' : 'No Autorizado';
         return [
-            $customers->user->name,
-            $customers->user->last_name,
-            $customers->user->phone ?: '',
-            $customers->user->username ?: '',
-            $customers->user->email ?: '',
-            $customers->user->document_type ? $customers->user->document_type->name : '',
-            $customers->user->document_number ?: ''
+            $permisos->request_date ?: '',
+            $permisos->date_permission ?: '',
+            $permisos->time_start ?: '',
+            $permisos->time_end ?: '',
+            $permisos->commitment ?: '',
+            $permisos->observations ?: '',
+            $autorizacion_boss ?: '',
+            $autorization_hr ?: '',
+            $permisos->user->name.' '.$permisos->user->last_name ?: '',
+            $permisos->user->document_number ?: '',
+            $permisos->user->position->name ?: '',
+            $permisos->user->area->name ?: '',
+            $permisos->user->rol->name ?: '',
         ];
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        $sheet->getStyle('A1:M1')->applyFromArray([
+            'font' => [
+                    'bold' => true,
+                    'name' => 'Arial',
+                    'color' => [
+                            'argb' => 'f8f8f8',
+                        ],
+            ],
+            'fill' => [
+                'fillType' => 'solid',
+                'startColor' => [
+                    'argb' => 'ff5353',
+                ]
+            ]
+        ]);
+
+        $sheet->getStyle('A1:M' . $sheet->getHighestRow())->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => 'thin'
+                ]
+            ]
+        ]);
     }
 }

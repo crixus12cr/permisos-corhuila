@@ -62,7 +62,7 @@ class PermissionController extends Controller
                             $_query->where('name', 'ilike', '%' . $request->position . '%');
                         });
                     })
-                    ->with('user')
+                    ->with('user.position', 'user.area', 'user.rol')
                     ->orderBy('created_at', 'desc');
 
                 break;
@@ -96,6 +96,7 @@ class PermissionController extends Controller
                             $_query->where('name', 'ilike', '%' . $request->area . '%');
                         });
                     })
+                    ->with('user.position', 'user.area', 'user.rol')
                     ->orderBy('created_at', 'desc');
 
                 break;
@@ -115,6 +116,7 @@ class PermissionController extends Controller
                             $query->whereDate('created_at', $request->created_at);
                         }
                     })
+                    ->with('user.position', 'user.area', 'user.rol')
                     ->orderBy('created_at', 'desc');
 
                 break;
@@ -135,8 +137,8 @@ class PermissionController extends Controller
     public function downloadExcel(Request $request)
     {
         $datos = $this->index($request, $data = true);
-
-        return Excel::download(new PermisosExport($datos), 'permissions.xlsx');
+        $now = Carbon::now();
+        return Excel::download(new PermisosExport($datos), 'permissions'.$now.'.xlsx');
     }
 
     /**
