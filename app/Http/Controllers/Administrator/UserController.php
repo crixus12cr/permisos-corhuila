@@ -118,20 +118,9 @@ class UserController extends Controller
             $user = User::findOrFail($id);
 
             $user->update([
-                'name' => $request->input('name'),
-                'last_name' => $request->input('last_name'),
-                'email' => $request->input('email'),
-                'type_document_id' => $request->input('type_document_id'),
-                'document_number' => $request->input('document_number'),
-                'position_id' => $request->input('position_id'),
-                'area_id' => $request->input('area_id'),
-                'rol_id' => $request->input('rol_id'),
+                'rol_id' => $request->rol_id,
+                'password' => Hash::make($request->password)
             ]);
-
-            if ($request->has('password')) {
-                $user->password = Hash::make($request->input('password'));
-                $user->save();
-            }
 
             return response()->json(['message' => 'Usuario actualizado con éxito', 'user' => $user]);
         } catch (\Exception $e) {
