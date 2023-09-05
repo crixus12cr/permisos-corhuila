@@ -57,7 +57,7 @@ class PermissionController extends Controller
                 break;
         }
 
-            return response()->json($permiso);
+        return response()->json($permiso);
     }
 
     // public function downloadExcel(Request $request)
@@ -184,7 +184,12 @@ class PermissionController extends Controller
                 ], 404);
             }
 
-            return Storage::download($filePath);
+            $fileUrl = Storage::url($filePath);
+
+            return response()->json([
+                'status' => 'SUCCESS',
+                'file_url' => $fileUrl,
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'ERROR',
@@ -213,25 +218,25 @@ class PermissionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-{
-    try {
-        $permission = Permission::find($id);
+    {
+        try {
+            $permission = Permission::find($id);
 
-        if ($permission) {
-            $permission->update([
-                'autorization_boss' => $request->boss,
-                'autorization_hr' => $request->hr,
-            ]);
-            $permission->save();
+            if ($permission) {
+                $permission->update([
+                    'autorization_boss' => $request->boss,
+                    'autorization_hr' => $request->hr,
+                ]);
+                $permission->save();
 
-            return response()->json(['message' => 'Permiso actualizado con éxito', 'permission' => $permission]);
-        } else {
-            return response()->json(['error' => 'Permiso no encontrado'], 404);
+                return response()->json(['message' => 'Permiso actualizado con éxito', 'permission' => $permission]);
+            } else {
+                return response()->json(['error' => 'Permiso no encontrado'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al actualizar el permiso: ' . $e->getMessage()], 500);
         }
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Error al actualizar el permiso: ' . $e->getMessage()], 500);
     }
-}
 
 
     /**
