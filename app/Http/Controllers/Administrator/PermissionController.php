@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
@@ -107,17 +108,17 @@ class PermissionController extends Controller
 
         $excelFile = Excel::download(new PermisosExport($datos), $fileName);
 
-        return Response::stream(
-            function () use ($excelFile) {
-                $excelFile->send('permissions.xlsx');
-            },
-            200,
-            [
-                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition' => 'attachment; filename="permissions.xlsx"',
-                'Cache-Control' => 'max-age=0',
-            ]
-        );
+        $fileContent = $excelFile->getFile()->getContent();
+
+        $storagePath = 'public/excel/' . $fileName;
+        Storage::put($storagePath, $fileContent);
+
+        $fileUrl = Storage::url($storagePath);
+
+        return response()->json([
+            'status' => 'SUCCESS',
+            'file_url' => $fileUrl,
+        ], 200);
     }
 
 

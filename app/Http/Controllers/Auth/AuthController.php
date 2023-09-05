@@ -57,15 +57,15 @@ class AuthController extends Controller
                         'type_document' => $user->type_document->name,
                         'document_number' => $user->document_number,
                         'position' => [
-                            'position_id' => $user->position_id,
+                            'id' => $user->position_id,
                             'name' => $user->position->name
                         ],
                         'area' => [
-                            'position_id' => $user->area_id,
+                            'id' => $user->area_id,
                             'name' => $user->area->name
                         ],
                         'rol' => [
-                            'rol_id' => $user->rol_id,
+                            'id' => $user->rol_id,
                             'name' => $user->rol->name
                             ]
                     ],
