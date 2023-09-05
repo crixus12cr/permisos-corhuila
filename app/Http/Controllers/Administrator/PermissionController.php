@@ -34,91 +34,21 @@ class PermissionController extends Controller
 
         switch ($rol) {
             case 1: //super usuario
-                $permiso = Permission::when($request->created_at, function ($query) use ($request) {
-                    if ($request->created_at === 'last_day') {
-                        $query->whereDate('created_at', Carbon::yesterday());
-                    } elseif ($request->created_at === 'last_week') {
-                        $query->whereDate('created_at', '>', Carbon::now()->subWeek());
-                    } elseif ($request->created_at === 'last_month') {
-                        $query->whereMonth('created_at', Carbon::now()->subMonth()->month);
-                        $query->whereYear('created_at', Carbon::now()->subMonth()->year);
-                    } elseif ($request->created_at === 'last_year') {
-                        $query->whereYear('created_at', Carbon::now()->subYear()->year);
-                    } else {
-                        $query->whereDate('created_at', $request->created_at);
-                    }
-                })
-                    ->when($request->document_number, function ($query) use ($request) {
-                        $query->whereHas('user', function ($_query) use ($request) {
-                            $_query->where('document_number', $request->document_number);
-                        });
-                    })
-                    ->when($request->area, function ($query) use ($request) {
-                        $query->whereHas('user.area', function ($_query) use ($request) {
-                            $_query->where('name', 'ilike', '%' . $request->area . '%');
-                        });
-                    })
-                    ->when($request->position, function ($query) use ($request) {
-                        $query->whereHas('user.position', function ($_query) use ($request) {
-                            $_query->where('name', 'ilike', '%' . $request->position . '%');
-                        });
-                    })
+                $permiso = Permission::where('autorization_hr', null)
                     ->with('user.position', 'user.area', 'user.rol')
-                    ->orderBy('created_at', 'desc');
+                    ->orderBy('created_at', 'desc')->get();
 
                 break;
             case 2: //administrador
-                $permiso = Permission::when($request->created_at, function ($query) use ($request) {
-                    if ($request->created_at === 'last_day') {
-                        $query->whereDate('created_at', Carbon::yesterday());
-                    } elseif ($request->created_at === 'last_week') {
-                        $query->whereDate('created_at', '>', Carbon::now()->subWeek());
-                    } elseif ($request->created_at === 'last_month') {
-                        $query->whereMonth('created_at', Carbon::now()->subMonth()->month);
-                        $query->whereYear('created_at', Carbon::now()->subMonth()->year);
-                    } elseif ($request->created_at === 'last_year') {
-                        $query->whereYear('created_at', Carbon::now()->subYear()->year);
-                    } else {
-                        $query->whereDate('created_at', $request->created_at);
-                    }
-                })
-                    ->when($request->document_number, function ($query) use ($request) {
-                        $query->whereHas('user', function ($_query) use ($request) {
-                            $_query->where('document_number', $request->document_number);
-                        });
-                    })
-                    ->when($request->area, function ($query) use ($request) {
-                        $query->whereHas('user.area', function ($_query) use ($request) {
-                            $_query->where('name', 'ilike', '%' . $request->area . '%');
-                        });
-                    })
-                    ->when($request->area, function ($query) use ($request) {
-                        $query->whereHas('user.position', function ($_query) use ($request) {
-                            $_query->where('name', 'ilike', '%' . $request->area . '%');
-                        });
-                    })
+                $permiso = Permission::where('autorization_boss', null)
                     ->with('user.position', 'user.area', 'user.rol')
-                    ->orderBy('created_at', 'desc');
+                    ->orderBy('created_at', 'desc')->get();
 
                 break;
             case 3: //usuario
                 $permiso =  Permission::where('user_id', $userId)
-                    ->when($request->created_at, function ($query) use ($request) {
-                        if ($request->created_at === 'last_day') {
-                            $query->whereDate('created_at', Carbon::yesterday());
-                        } elseif ($request->created_at === 'last_week') {
-                            $query->whereDate('created_at', '>', Carbon::now()->subWeek());
-                        } elseif ($request->created_at === 'last_month') {
-                            $query->whereMonth('created_at', Carbon::now()->subMonth()->month);
-                            $query->whereYear('created_at', Carbon::now()->subMonth()->year);
-                        } elseif ($request->created_at === 'last_year') {
-                            $query->whereYear('created_at', Carbon::now()->subYear()->year);
-                        } else {
-                            $query->whereDate('created_at', $request->created_at);
-                        }
-                    })
                     ->with('user.position', 'user.area', 'user.rol')
-                    ->orderBy('created_at', 'desc');
+                    ->orderBy('created_at', 'desc')->get();
 
                 break;
 
@@ -127,12 +57,7 @@ class PermissionController extends Controller
                 break;
         }
 
-        if ($data) {
-            return $permissions = $permiso->get();
-        } else {
-            $permissions = $permiso->get();
-            return response()->json($permissions);
-        }
+            return response()->json($permiso);
     }
 
     // public function downloadExcel(Request $request)
@@ -144,7 +69,39 @@ class PermissionController extends Controller
 
     public function downloadExcel(Request $request)
     {
-        $datos = $this->index($request, $data = true);
+        $datos = Permission::when($request->created_at, function ($query) use ($request) {
+            if ($request->created_at === 'last_day') {
+                $query->whereDate('created_at', Carbon::yesterday());
+            } elseif ($request->created_at === 'last_week') {
+                $query->whereDate('created_at', '>', Carbon::now()->subWeek());
+            } elseif ($request->created_at === 'last_month') {
+                $query->whereMonth('created_at', Carbon::now()->subMonth()->month);
+                $query->whereYear('created_at', Carbon::now()->subMonth()->year);
+            } elseif ($request->created_at === 'last_year') {
+                $query->whereYear('created_at', Carbon::now()->subYear()->year);
+            } else {
+                $query->whereDate('created_at', $request->created_at);
+            }
+        })
+            ->when($request->document_number, function ($query) use ($request) {
+                $query->whereHas('user', function ($_query) use ($request) {
+                    $_query->where('document_number', $request->document_number);
+                });
+            })
+            ->when($request->area, function ($query) use ($request) {
+                $query->whereHas('user.area', function ($_query) use ($request) {
+                    $_query->where('name', 'ilike', '%' . $request->area . '%');
+                });
+            })
+            ->when($request->position, function ($query) use ($request) {
+                $query->whereHas('user.position', function ($_query) use ($request) {
+                    $_query->where('name', 'ilike', '%' . $request->position . '%');
+                });
+            })
+            ->with('user.position', 'user.area', 'user.rol')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         $now = Carbon::now();
         $fileName = 'permissions' . $now . '.xlsx';
 
