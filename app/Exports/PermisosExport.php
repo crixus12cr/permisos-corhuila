@@ -28,7 +28,7 @@ class PermisosExport implements FromCollection,WithHeadings, WithMapping, Should
 
     public function headings(): array
     {
-        return ['Fecha solicitud', 'Fecha permiso', 'Hora inicio', 'Hora fin', 'Tipo compromiso', 'Observacion', 'Autorizacion jefe', 'Autorizacion Recursos Humanos', 'Usuario', 'N° documento', 'Cargo', 'Area', 'Rol'];
+        return ['Fecha de validacion','Fecha solicitud', 'Fecha permiso', 'Hora inicio', 'Hora fin', 'Tipo compromiso', 'Observacion', 'Autorizacion jefe', 'Autorizacion Recursos Humanos', 'Usuario', 'N° documento', 'Cargo', 'Area', 'Rol'];
     }
 
     public function map($permisos): array
@@ -36,6 +36,7 @@ class PermisosExport implements FromCollection,WithHeadings, WithMapping, Should
         $autorizacion_boss = $permisos->autorization_boss ? 'Autorizado' : 'No Autorizado';
         $autorization_hr = $permisos->autorization_hr ? 'Autorizado' : 'No Autorizado';
         return [
+            $permisos->updated_at ?: '',
             $permisos->request_date ?: '',
             $permisos->date_permission ?: '',
             $permisos->time_start ?: '',
