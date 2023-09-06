@@ -32,6 +32,7 @@ class UserController extends Controller
                     $query->where('area_id', $request->area_id);
                 })
                 ->with('type_document','position','area','rol')
+                ->orderBy('created_at', 'asc')
                 ->get();
 
             if ($user->isEmpty()) {
