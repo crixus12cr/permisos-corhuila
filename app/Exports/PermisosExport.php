@@ -36,7 +36,6 @@ class PermisosExport implements FromCollection,WithHeadings, WithMapping, Should
         $autorizacion_boss = $permisos->autorization_boss ? 'Autorizado' : 'No Autorizado';
         $autorization_hr = $permisos->autorization_hr ? 'Autorizado' : 'No Autorizado';
         return [
-            // $permisos->updated_at ?: '',
             $permisos->request_date ?: '',
             $permisos->date_permission ?: '',
             $permisos->time_start ?: '',
