@@ -35,7 +35,7 @@ Route::post('/register', [AuthController::class, 'register']);
 
 /* rutas */
 
-Route::group(['middleware' => ['jwt.token']], function () {
+Route::group(['middleware' => [/* 'jwt.token' */]], function () {
 
     Route::apiResource('/permission', PermissionController::class);
     Route::apiResource('/users', UserController::class);

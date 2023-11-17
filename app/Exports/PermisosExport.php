@@ -28,7 +28,24 @@ class PermisosExport implements FromCollection,WithHeadings, WithMapping, Should
 
     public function headings(): array
     {
-        return ['Fecha solicitud', 'Fecha permiso', 'Hora inicio', 'Hora fin', 'Tipo compromiso', 'Observacion', 'Autorizacion jefe', 'Autorizacion Recursos Humanos', 'Usuario', 'N° documento', 'Cargo', 'Area', 'Rol'];
+        return [
+            'Fecha solicitud',
+            'Usuario',
+            'N° documento',
+            'Cargo',
+            'Fecha permiso',
+            'Hora inicio',
+            'Hora fin',
+            'Tipo compromiso',
+            'Observacion',
+            'Autorizacion jefe',
+            'Autorizacion Recursos Humanos',
+
+
+
+            'Area',
+            'Rol'
+        ];
     }
 
     public function map($permisos): array
@@ -37,6 +54,9 @@ class PermisosExport implements FromCollection,WithHeadings, WithMapping, Should
         $autorization_hr = $permisos->autorization_hr ? 'Autorizado' : 'No Autorizado';
         return [
             $permisos->request_date ?: '',
+            $permisos->user->name.' '.$permisos->user->last_name ?: '',
+            $permisos->user->document_number ?: '',
+            $permisos->user->position->name ?: '',
             $permisos->date_permission ?: '',
             $permisos->time_start ?: '',
             $permisos->time_end ?: '',
@@ -44,9 +64,6 @@ class PermisosExport implements FromCollection,WithHeadings, WithMapping, Should
             $permisos->observations ?: '',
             $autorizacion_boss ?: '',
             $autorization_hr ?: '',
-            $permisos->user->name.' '.$permisos->user->last_name ?: '',
-            $permisos->user->document_number ?: '',
-            $permisos->user->position->name ?: '',
             $permisos->user->area->name ?: '',
             $permisos->user->rol->name ?: '',
         ];

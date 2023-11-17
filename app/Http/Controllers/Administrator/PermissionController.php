@@ -61,13 +61,6 @@ class PermissionController extends Controller
         return response()->json($permiso);
     }
 
-    // public function downloadExcel(Request $request)
-    // {
-    //     $datos = $this->index($request, $data = true);
-    //     $now = Carbon::now();
-    //     return Excel::download(new PermisosExport($datos), 'permissions'.$now.'.xlsx');
-    // }
-
     public function downloadExcel(Request $request)
     {
         $datos = Permission::when($request->created_at, function ($query) use ($request) {
@@ -76,44 +69,46 @@ class PermissionController extends Controller
             } elseif ($request->created_at === 'last_week') {
                 $query->whereDate('created_at', '>', Carbon::now()->subWeek());
             } elseif ($request->created_at === 'last_month') {
-                $query->whereMonth('created_at', Carbon::now()->subMonth()->month);
-                $query->whereYear('created_at', Carbon::now()->subMonth()->year);
+                $query->whereDate('created_at', '>', Carbon::now()->subMonth()->startOfMonth());
             } elseif ($request->created_at === 'last_year') {
-                $query->whereYear('created_at', Carbon::now()->subYear()->year);
+                $query->whereDate('created_at', '>', Carbon::now()->subYear()->startOfYear());
             } else {
                 $query->whereDate('created_at', $request->created_at);
             }
         })
-            ->when($request->document_number, function ($query) use ($request) {
-                $query->whereHas('user', function ($_query) use ($request) {
-                    $_query->where('document_number', $request->document_number);
-                });
-            })
-            ->when($request->area, function ($query) use ($request) {
-                $query->whereHas('user.area', function ($_query) use ($request) {
-                    $_query->where('name', 'ilike', '%' . $request->area . '%');
-                });
-            })
-            ->when($request->position, function ($query) use ($request) {
-                $query->whereHas('user.position', function ($_query) use ($request) {
-                    $_query->where('name', 'ilike', '%' . $request->position . '%');
-                });
-            })
-            ->with('user.position', 'user.area', 'user.rol')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        ->when($request->document_number, function ($query) use ($request) {
+            $query->whereHas('user', function ($userQuery) use ($request) {
+                $userQuery->where('document_number', $request->document_number);
+            });
+        })
+        ->when($request->area, function ($query) use ($request) {
+            $query->whereHas('user.area', function ($areaQuery) use ($request) {
+                $areaQuery->where('name', 'ilike', '%' . $request->area . '%');
+            });
+        })
+        ->when($request->position, function ($query) use ($request) {
+            $query->whereHas('user.position', function ($positionQuery) use ($request) {
+                $positionQuery->where('name', 'ilike', '%' . $request->position . '%');
+            });
+        })
+        ->with('user.position', 'user.area', 'user.rol')
+        ->orderByDesc('created_at')
+        ->get();
+
+        // return $datos;
 
         $now = Carbon::now();
         $fileName = 'permissions_' . $now->format('Y-m-d_H-i-s') . '.xlsx';
 
-        Excel::store(new PermisosExport($datos), 'public/excel/' . $fileName);
+        return Excel::download(new PermisosExport($datos), $fileName);
+        // Excel::store(new PermisosExport($datos), 'public/excel/' . $fileName);
 
-        $fileUrl = Storage::url('public/excel/' . $fileName);
+        // $fileUrl = Storage::url('public/excel/' . $fileName);
 
-        return response()->json([
-            'status' => 'SUCCESS',
-            'file_url' => $fileUrl,
-        ], 200);
+        // return response()->json([
+        //     'status' => 'SUCCESS',
+        //     'file_url' => $fileUrl,
+        // ], 200);
     }
 
 
