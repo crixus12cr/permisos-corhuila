@@ -100,15 +100,15 @@ class PermissionController extends Controller
         $now = Carbon::now();
         $fileName = 'permissions_' . $now->format('Y-m-d_H-i-s') . '.xlsx';
 
-        return Excel::download(new PermisosExport($datos), $fileName);
-        // Excel::store(new PermisosExport($datos), 'public/excel/' . $fileName);
+        // return Excel::download(new PermisosExport($datos), $fileName);
+        Excel::store(new PermisosExport($datos), 'public/excel/' . $fileName);
 
-        // $fileUrl = Storage::url('public/excel/' . $fileName);
+        $fileUrl = Storage::url('public/excel/' . $fileName);
 
-        // return response()->json([
-        //     'status' => 'SUCCESS',
-        //     'file_url' => $fileUrl,
-        // ], 200);
+        return response()->json([
+            'status' => 'SUCCESS',
+            'file_url' => $fileUrl,
+        ], 200);
     }
 
 
