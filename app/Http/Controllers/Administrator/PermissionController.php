@@ -63,18 +63,8 @@ class PermissionController extends Controller
 
     public function downloadExcel(Request $request)
     {
-        $datos = Permission::when($request->created_at, function ($query) use ($request) {
-            if ($request->created_at === 'last_day') {
-                $query->whereDate('created_at', Carbon::yesterday());
-            } elseif ($request->created_at === 'last_week') {
-                $query->whereDate('created_at', '>', Carbon::now()->subWeek());
-            } elseif ($request->created_at === 'last_month') {
-                $query->whereDate('created_at', '>', Carbon::now()->subMonth()->startOfMonth());
-            } elseif ($request->created_at === 'last_year') {
-                $query->whereDate('created_at', '>', Carbon::now()->subYear()->startOfYear());
-            } else {
-                $query->whereDate('created_at', $request->created_at);
-            }
+        $datos = Permission::when($request->start_date && $request->end_date, function ($query) use ($request) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
         })
         ->when($request->document_number, function ($query) use ($request) {
             $query->whereHas('user', function ($userQuery) use ($request) {
