@@ -31,7 +31,7 @@ class UserController extends Controller
                 ->when($request->area_id, function ($query) use ($request) {
                     $query->where('area_id', $request->area_id);
                 })
-                ->with('type_document','position','area','rol')
+                ->with('type_document', 'position', 'area', 'rol')
                 ->orderBy('created_at', 'asc')
                 ->get();
 
@@ -113,40 +113,45 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     public function update(Request $request, $id)
-     {
-         try {
-             $user = User::findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        try {
+            $user = User::findOrFail($id);
 
-             if ($request->has('rol_id')) {
-                 $user->update([
-                     'rol_id' => $request->rol_id,
-                 ]);
-             }
+            if ($request->has('rol_id')) {
+                $user->update([
+                    'rol_id' => $request->rol_id,
+                ]);
+            }
 
-             return response()->json(['message' => 'Usuario actualizado con éxito', 'user' => $user]);
-         } catch (\Exception $e) {
-             return response()->json(['error' => 'Error al actualizar el usuario: ' . $e->getMessage()], 500);
-         }
-     }
+            return response()->json(['message' => 'Usuario actualizado con éxito', 'user' => $user]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al actualizar el usuario: ' . $e->getMessage()], 500);
+        }
+    }
 
-     public function contra(Request $request)
-     {
-         try {
-             $user = User::findOrFail($request->id);
+    public function contra(Request $request)
+    {
+        try {
+            $user = User::where('document_number', $request->id)->first();
 
-             if ($request->has('password')) {
-                 $contrasena = Hash::make($request->password);
-                 $user->update([
-                     'password' => $contrasena
-                 ]);
-             }
+            if ($user) {
+                if ($request->has('password')) {
+                    $contrasena = Hash::make($request->password);
+                    $user->update([
+                        'password' => $contrasena
+                    ]);
+                }
 
-             return response()->json(['message' => 'Usuario actualizado con éxito', 'user' => $user]);
-         } catch (\Exception $e) {
-             return response()->json(['error' => 'Error al actualizar el usuario: ' . $e->getMessage()], 500);
-         }
-     }
+                return response()->json(['message' => 'Usuario actualizado con éxito', 'user' => $user]);
+            } else {
+                return response()->json(['error' => 'Usuario no encontrado'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al actualizar el usuario: ' . $e->getMessage()], 500);
+        }
+    }
+
 
 
 
