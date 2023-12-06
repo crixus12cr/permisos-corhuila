@@ -21,8 +21,8 @@ class AuthController extends Controller
             'password' => 'required|min:6',
             'type_document_id' => 'required|numeric|exists:type_documents,id',
             'document_number' => 'required',
-            'position_id' => 'required|numeric|exists:positions,id',
-            'area_id' => 'required|numeric|exists:areas,id',
+            'position_id' => 'required',
+            'area_id' => 'required',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -56,14 +56,8 @@ class AuthController extends Controller
                         'email' => $user->email,
                         'type_document' => $user->type_document->name,
                         'document_number' => $user->document_number,
-                        'position' => [
-                            'id' => $user->position_id,
-                            'name' => $user->position->name
-                        ],
-                        'area' => [
-                            'id' => $user->area_id,
-                            'name' => $user->area->name
-                        ],
+                        'position' => $user->position_id,
+                        'area' => $user->area_id,
                         'rol' => [
                             'id' => $user->rol_id,
                             'name' => $user->rol->name
@@ -102,14 +96,8 @@ class AuthController extends Controller
                         'email' => $user->email,
                         'type_document' => $user->type_document->name,
                         'document_number' => $user->document_number,
-                        'position' => [
-                            'id' => $user->position_id,
-                            'name' => $user->position->name
-                        ],
-                        'area' => [
-                            'id' => $user->area_id,
-                            'name' => $user->area->name
-                        ],
+                        'position' => $user->position_id,
+                        'area' => $user->area_id,
                         'rol' => [
                             'id' => $user->rol_id,
                             'name' => $user->rol->name

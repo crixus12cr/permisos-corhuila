@@ -24,8 +24,8 @@ class UserSeeder extends Seeder
                 'password' => '12345678',
                 'type_document_id' => 1,
                 'document_number' => '1078965783',
-                'position_id' => 1,
-                'area_id' => 1,
+                'position_id' => 'profesor',
+                'area_id' => 'matematicas',
                 'rol_id' => 1
             ]
         ];
