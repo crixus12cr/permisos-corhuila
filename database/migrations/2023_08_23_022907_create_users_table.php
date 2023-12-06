@@ -20,22 +20,16 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
 
-            $table->foreignId('type_document_id')
+            $table->string('type_document_id')
             ->constrained('type_documents')
             ->onUpdate('cascade')
             ->onDelete('cascade');
 
             $table->string('document_number')->unique();
 
-            $table->foreignId('position_id')
-            ->constrained('positions')
-            ->onUpdate('cascade')
-            ->onDelete('cascade');
+            $table->string('position_id');
 
-            $table->foreignId('area_id')
-            ->constrained('areas')
-            ->onUpdate('cascade')
-            ->onDelete('cascade');
+            $table->string('area_id');
 
             $table->foreignId('rol_id')
             ->default(3)
